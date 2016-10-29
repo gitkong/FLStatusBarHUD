@@ -85,7 +85,7 @@ static NSString * resueId = @"cell";
     
     FLAnimationDirection type = FLAnimationDirectionFromTop;
     if (indexPath.row == 4) {
-        //        [[FLStatusBarHUD shareStatusBar] fl_hide];
+        [[FLStatusBarHUD shareStatusBar] fl_hide];
         [[FLStatusBarHUD shareStatusBar] fl_reset];
         return;
     }
@@ -122,6 +122,12 @@ static NSString * resueId = @"cell";
     else if (indexPath.row == 9){
         [[FLStatusBarHUD shareStatusBar] fl_showMessage:@"显示消息" autoDismiss:_flag];
         [FLStatusBarHUD shareStatusBar].statusBarHeight = 64;
+        return;
+    }
+    else if (indexPath.row == 10){
+        [[FLStatusBarHUD shareStatusBar] fl_showMessage:@"我有背景图片" autoDismiss:_flag];
+        [FLStatusBarHUD shareStatusBar].statusBarHeight = 64;
+        [FLStatusBarHUD shareStatusBar].backgroundImage = [UIImage imageNamed:@"banner1"];
         return;
     }
     if (!_selected) {
@@ -195,7 +201,7 @@ static NSString * resueId = @"cell";
 
 - (NSMutableArray *)arrM{
     if (_arrM == nil) {
-        _arrM = [NSMutableArray arrayWithObjects:@"动画从上到下",@"动画从左到右",@"动画从下到上",@"动画从右到左",@"隐藏并重置",@"显示成功--默认statusBar,设置position 停留5s",@"显示失败--默认statusBar",@"显示加载中(不带文字)--默认statusBar",@"显示加载中(带文字)--默认statusBar",@"显示消息--默认statusBar", nil];
+        _arrM = [NSMutableArray arrayWithObjects:@"动画从上到下",@"动画从左到右",@"动画从下到上",@"动画从右到左",@"隐藏并重置",@"显示成功--默认statusBar,设置position 停留5s",@"显示失败--默认statusBar",@"显示加载中(不带文字)--默认statusBar",@"显示加载中(带文字)--默认statusBar",@"显示消息--默认statusBar",@"设置背景图片", nil];
     }
     return _arrM;
 }

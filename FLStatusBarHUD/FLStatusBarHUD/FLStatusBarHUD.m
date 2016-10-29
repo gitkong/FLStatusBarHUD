@@ -32,6 +32,8 @@ static UILabel *_loadingLabel;
 static NSTimer *_timer;
 /** 指示器 */
 static UIActivityIndicatorView *_indicatorView;
+/** 背景图 */
+static UIImageView *_backgroundImageView;
 /*------------------------常量-----------------------*/
 
 /** 按钮左边的间距 */
@@ -51,39 +53,38 @@ static CGFloat const FLDefaultMessageDuration = 2;
 
 static FLAnimationDirection _currentAnimationDirection;
 
-+ (void)initialize{
-//    [FLStatusBarHUD shareStatusBar].animationDuration = FLDefaultAnimationDuration;
-//    _currentAnimationDirection = FLAnimationDirectionFromTop;
-    [FLStatusBarHUD shareStatusBar].messageDuration = 2;
-    [FLStatusBarHUD shareStatusBar].animationDirection = FLAnimationDirectionFromTop;
-    [FLStatusBarHUD shareStatusBar].statusBarHeight = FLDefaultStatusBarHeight;
-}
+static CGPoint _currentPosition;
+
 
 + (instancetype)shareStatusBar{
     static FLStatusBarHUD *instance;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         instance = [[self alloc] init];
-//        // 默认动画时间
-//        instance.animationDuration = 0.25;
-//        // 默认消息停留时间
-//        instance.messageDuration = 2;
-//        // 默认动画执行方式
-//        instance.animationDirection = FLAnimationDirectionFromTop;
-//        // 默认状态栏高度
-//        instance.statusBarHeight = FLDefaultStatusBarHeight;
+        // 默认动画时间
+        instance.animationDuration = 0.25;
+        // 默认消息停留时间
+        instance.messageDuration = 2;
+        // 默认动画执行方式
+        instance.animationDirection = FLAnimationDirectionFromTop;
+        // 默认状态栏高度
+        instance.statusBarHeight = FLDefaultStatusBarHeight;
     });
     return instance;
 }
 
 - (void)fl_showCustomView:(UIView *)customView atView:(UIView *)view animateDirection:(FLAnimationDirection)animationDirection autoDismiss:(BOOL)autoDismiss{
-//    _currentAnimationDirection = animationDirection;
+    // 记录动画类型
+    _currentAnimationDirection = animationDirection;
     // 先移除上一个
     [self fl_removeStatusBar];
     // 停止定时器
     [self fl_invalidateTimer];
-    
+    // 保存CustomView
     _statusBar = customView;
+    
+    _backgroundImageView = [[UIImageView alloc] initWithFrame:customView.bounds];
+    [_statusBar insertSubview:_backgroundImageView atIndex:0];
     
     // 添加手势
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapOperation:)];
@@ -130,6 +131,10 @@ static FLAnimationDirection _currentAnimationDirection;
     }
 }
 
+//- (CGPoint)position{
+//    return _currentPosition;
+//}
+
 - (void)setActivityIndicatorViewStyle:(UIActivityIndicatorViewStyle)activityIndicatorViewStyle{
     _activityIndicatorViewStyle = activityIndicatorViewStyle;
     if (_indicatorView) {
@@ -148,11 +153,21 @@ static FLAnimationDirection _currentAnimationDirection;
             _loadingLabel.frame = _statusBar.bounds;
             _indicatorView.fl_y = (statusBarHeight - _indicatorView.bounds.size.height) / 2;
         }
+        if (_backgroundImageView) {
+            _backgroundImageView.frame = _statusBar.bounds;
+        }
     }
 }
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor {
     _statusBar.backgroundColor = backgroundColor;
+}
+
+- (void)setBackgroundImage:(UIImage *)backgroundImage{
+    _backgroundImage = backgroundImage;
+    if (_backgroundImageView) {
+        _backgroundImageView.image = backgroundImage;
+    }
 }
 
 - (NSTimeInterval)animationDuration{
@@ -272,14 +287,30 @@ static FLAnimationDirection _currentAnimationDirection;
 }
 
 #pragma mark -- private method
+
+/**
+ 创建默认的view
+
+ @param animateDirection 动画类型
+
+ @return 返回创建默认的view
+ */
 - (UIView *)fl_defaultViewWithAnimateDirection:(FLAnimationDirection)animateDirection{
+    _currentAnimationDirection = animateDirection;
     UIView *defaultView = [[UIView alloc] init];
+    // 默认为白色
     defaultView.backgroundColor = [UIColor whiteColor];
     // 初始化frame
     [self changeDefaultView:defaultView height:self.statusBarHeight ? self.statusBarHeight : FLDefaultStatusBarHeight];
     return defaultView;
 }
 
+/**
+ 设置默认view的frame
+
+ @param view   默认的view
+ @param height 高度
+ */
 - (void)changeDefaultView:(UIView *)view height:(CGFloat)height{
     switch (_currentAnimationDirection) {
         case 0:{// 从上到下
@@ -299,8 +330,15 @@ static FLAnimationDirection _currentAnimationDirection;
             break;
         }
     }
+    _currentPosition = view.frame.origin;
 }
 
+/**
+ 动画执行
+
+ @param animationDirection 动画类型
+ @param autoDismiss        是否自动隐藏
+ */
 - (void)fl_startAnimationDirection:(FLAnimationDirection)animationDirection autoDismiss:(BOOL)autoDismiss{
     switch (animationDirection) {
         case 0:{// 向上
@@ -350,17 +388,23 @@ static FLAnimationDirection _currentAnimationDirection;
 - (void)fireTimer:(BOOL)flag{
     //停止定时器
     [self fl_invalidateTimer];
+    
     if (flag) {
         //开启定时器
         _timer = [NSTimer scheduledTimerWithTimeInterval:self.messageDuration ? self.messageDuration : FLDefaultMessageDuration target:self selector:@selector(fl_hide) userInfo:nil repeats:NO];
     }
     else{
         //停止定时器
-        [self fl_invalidateTimer];
+//        [self fl_invalidateTimer];
     }
     
 }
 
+/**
+ statusBar点击事件
+
+ @param gesR gesR description
+ */
 - (void)tapOperation:(UIGestureRecognizer *)gesR{
     // 如果有实现，执行block，否则点击隐藏
     if (self.statusBarTapOpreationBlock) {
@@ -371,6 +415,9 @@ static FLAnimationDirection _currentAnimationDirection;
     }
 }
 
+/**
+ 重置
+ */
 - (void)fl_reset{
     self.messageDuration = FLDefaultMessageDuration;
     self.statusBarHeight = FLDefaultStatusBarHeight;
@@ -383,6 +430,9 @@ static FLAnimationDirection _currentAnimationDirection;
 }
 
 
+/**
+ 移除statusBar
+ */
 - (void)fl_removeStatusBar{
     if (_statusBar) {
         [_statusBar removeFromSuperview];
