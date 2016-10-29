@@ -7,7 +7,6 @@
 //
 
 #import "FLStatusBarHUD.h"
-#import "UIView+FLUnits.h"
 
 @interface FLStatusBarHUD ()
 @property (nonatomic,strong)UIView *statusBar;
@@ -127,7 +126,7 @@ static CGPoint _currentPosition;
 - (void)setPosition:(CGPoint)position{
     _position = position;
     if (_statusBar) {
-        [self changeDefaultView:_statusBar height:_statusBar.fl_height];
+        [self changeDefaultView:_statusBar height:_statusBar.frame.size.height];
     }
 }
 
@@ -151,7 +150,9 @@ static CGPoint _currentPosition;
         }
         if (_loadingLabel) {
             _loadingLabel.frame = _statusBar.bounds;
-            _indicatorView.fl_y = (statusBarHeight - _indicatorView.bounds.size.height) / 2;
+            CGRect indicatorViewF = _indicatorView.frame;
+            indicatorViewF.origin.y = (statusBarHeight - _indicatorView.bounds.size.height) / 2;
+            _indicatorView.frame = indicatorViewF;
         }
         if (_backgroundImageView) {
             _backgroundImageView.frame = _statusBar.bounds;
@@ -175,7 +176,7 @@ static CGPoint _currentPosition;
 }
 
 //- (void)fl_showMessage:(NSString *)message image:(UIImage *)image origin:(CGPoint)origin atView:(UIView *)view autoDismiss:(BOOL)autoDismiss{
-//    
+//
 //}
 
 - (void)fl_showMessage:(NSString *)message image:(UIImage *)image atView:(UIView *)view autoDismiss:(BOOL)autoDismiss{
@@ -290,9 +291,9 @@ static CGPoint _currentPosition;
 
 /**
  创建默认的view
-
+ 
  @param animateDirection 动画类型
-
+ 
  @return 返回创建默认的view
  */
 - (UIView *)fl_defaultViewWithAnimateDirection:(FLAnimationDirection)animateDirection{
@@ -307,7 +308,7 @@ static CGPoint _currentPosition;
 
 /**
  设置默认view的frame
-
+ 
  @param view   默认的view
  @param height 高度
  */
@@ -335,16 +336,18 @@ static CGPoint _currentPosition;
 
 /**
  动画执行
-
+ 
  @param animationDirection 动画类型
  @param autoDismiss        是否自动隐藏
  */
 - (void)fl_startAnimationDirection:(FLAnimationDirection)animationDirection autoDismiss:(BOOL)autoDismiss{
+    CGRect statusBarF = _statusBar.frame;
     switch (animationDirection) {
         case 0:{// 向上
-            _statusBar.fl_y -= _statusBar.fl_height;
+            statusBarF.origin.y -= _statusBar.frame.size.height;
+            _statusBar.frame = statusBarF;
             [UIView animateWithDuration:FLDefaultAnimationDuration animations:^{
-                _statusBar.transform = CGAffineTransformMakeTranslation(0, _statusBar.fl_height);
+                _statusBar.transform = CGAffineTransformMakeTranslation(0, _statusBar.frame.size.height);
             } completion:^(BOOL finished) {
                 // 是否自动隐藏
                 [self fireTimer:autoDismiss];
@@ -352,9 +355,10 @@ static CGPoint _currentPosition;
             break;
         }
         case 1:{// 向左
-            _statusBar.fl_x -= _statusBar.fl_width;
+            statusBarF.origin.x -= _statusBar.frame.size.width;
+            _statusBar.frame = statusBarF;
             [UIView animateWithDuration:FLDefaultAnimationDuration animations:^{
-                _statusBar.transform = CGAffineTransformMakeTranslation(_statusBar.fl_width, 0);
+                _statusBar.transform = CGAffineTransformMakeTranslation(_statusBar.frame.size.width, 0);
             } completion:^(BOOL finished) {
                 // 是否自动隐藏
                 [self fireTimer:autoDismiss];
@@ -362,9 +366,10 @@ static CGPoint _currentPosition;
             break;
         }
         case 2:{// 向下
-            _statusBar.fl_y += _statusBar.fl_height;
+            statusBarF.origin.y += _statusBar.frame.size.height;
+            _statusBar.frame = statusBarF;
             [UIView animateWithDuration:FLDefaultAnimationDuration animations:^{
-                _statusBar.transform = CGAffineTransformMakeTranslation(0, -_statusBar.fl_height);
+                _statusBar.transform = CGAffineTransformMakeTranslation(0, -_statusBar.frame.size.height);
             } completion:^(BOOL finished) {
                 // 是否自动隐藏
                 [self fireTimer:autoDismiss];
@@ -372,9 +377,10 @@ static CGPoint _currentPosition;
             break;
         }
         case 3:{// 向右
-            _statusBar.fl_x += _statusBar.fl_width;
+            statusBarF.origin.x += _statusBar.frame.size.width;
+            _statusBar.frame = statusBarF;
             [UIView animateWithDuration:FLDefaultAnimationDuration animations:^{
-                _statusBar.transform = CGAffineTransformMakeTranslation(-_statusBar.fl_width, 0);
+                _statusBar.transform = CGAffineTransformMakeTranslation(-_statusBar.frame.size.width, 0);
             } completion:^(BOOL finished) {
                 // 是否自动隐藏
                 [self fireTimer:autoDismiss];
@@ -382,6 +388,7 @@ static CGPoint _currentPosition;
             break;
         }
     }
+    
     
 }
 
@@ -395,14 +402,14 @@ static CGPoint _currentPosition;
     }
     else{
         //停止定时器
-//        [self fl_invalidateTimer];
+        //        [self fl_invalidateTimer];
     }
     
 }
 
 /**
  statusBar点击事件
-
+ 
  @param gesR gesR description
  */
 - (void)tapOperation:(UIGestureRecognizer *)gesR{

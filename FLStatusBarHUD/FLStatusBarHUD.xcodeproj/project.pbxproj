@@ -16,7 +16,6 @@
 		110A22571DC35F00001D04CE /* FLStatusBarHUDUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 110A22561DC35F00001D04CE /* FLStatusBarHUDUITests.m */; };
 		110A22661DC35F35001D04CE /* FLStatusBarHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 110A22611DC35F35001D04CE /* FLStatusBarHUD.bundle */; };
 		110A22671DC35F35001D04CE /* FLStatusBarHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 110A22631DC35F35001D04CE /* FLStatusBarHUD.m */; };
-		110A22681DC35F35001D04CE /* UIView+FLUnits.m in Sources */ = {isa = PBXBuildFile; fileRef = 110A22651DC35F35001D04CE /* UIView+FLUnits.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,8 +45,6 @@
 		110A22611DC35F35001D04CE /* FLStatusBarHUD.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FLStatusBarHUD.bundle; sourceTree = "<group>"; };
 		110A22621DC35F35001D04CE /* FLStatusBarHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLStatusBarHUD.h; sourceTree = "<group>"; };
 		110A22631DC35F35001D04CE /* FLStatusBarHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLStatusBarHUD.m; sourceTree = "<group>"; };
-		110A22641DC35F35001D04CE /* UIView+FLUnits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+FLUnits.h"; sourceTree = "<group>"; };
-		110A22651DC35F35001D04CE /* UIView+FLUnits.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FLUnits.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,8 +123,6 @@
 				110A22611DC35F35001D04CE /* FLStatusBarHUD.bundle */,
 				110A22621DC35F35001D04CE /* FLStatusBarHUD.h */,
 				110A22631DC35F35001D04CE /* FLStatusBarHUD.m */,
-				110A22641DC35F35001D04CE /* UIView+FLUnits.h */,
-				110A22651DC35F35001D04CE /* UIView+FLUnits.m */,
 			);
 			name = FLStatusBarHUD;
 			sourceTree = "<group>";
@@ -237,7 +232,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				110A22681DC35F35001D04CE /* UIView+FLUnits.m in Sources */,
 				110A22441DC35F00001D04CE /* ViewController.m in Sources */,
 				110A22411DC35F00001D04CE /* AppDelegate.m in Sources */,
 				110A223E1DC35F00001D04CE /* main.m in Sources */,
@@ -440,6 +434,7 @@
 				110A225D1DC35F00001D04CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		110A225E1DC35F00001D04CE /* Build configuration list for PBXNativeTarget "FLStatusBarHUDUITests" */ = {
 			isa = XCConfigurationList;
@@ -448,6 +443,7 @@
 				110A22601DC35F00001D04CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
